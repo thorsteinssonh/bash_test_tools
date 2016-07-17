@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        
+        <link rel="shortcut icon" href="./img/favicon.ico">
+
+	<title>Bash Test Tools</title>
+
+        <link href="./css/bootstrap-custom.min.css" rel="stylesheet">
+        <link href="./css/font-awesome-4.0.3.css" rel="stylesheet">
+        <link href="./css/base.css" rel="stylesheet">
+        <link rel="stylesheet" href="./css/highlight.css">
+
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+        <![endif]-->
+
+        
+    </head>
+
+    <body class="homepage">
+
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+
+        <!-- Collapsed navigation -->
+        <div class="navbar-header">
+            
+            <!-- Expander button -->
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            
+
+            <!-- Main title -->
+            <a class="navbar-brand" href=".">Bash Test Tools</a>
+        </div>
+
+        <!-- Expanded navigation -->
+        <div class="navbar-collapse collapse">
+            
+                <!-- Main navigation -->
+                <ul class="nav navbar-nav">
+                
+                
+                    <li class="active">
+                        <a href=".">Introduction</a>
+                    </li>
+                
+                
+                
+                    <li >
+                        <a href="Assert_API/">Assert API</a>
+                    </li>
+                
+                
+                </ul>
+            
+
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                        <i class="fa fa-search"></i> Search
+                    </a>
+                </li>
+                
+                    <li class="disabled">
+                        <a rel="next" >
+                            <i class="fa fa-arrow-left"></i> Previous
+                        </a>
+                    </li>
+                    <li >
+                        <a rel="prev" href="Assert_API/">
+                            Next <i class="fa fa-arrow-right"></i>
+                        </a>
+                    </li>
+                
+                
+            </ul>
+        </div>
+    </div>
+</div>
+
+        <div class="container">
+            
+                <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+    
+        <li class="main active"><a href="#bash-test-tools">Bash Test Tools</a></li>
+        
+    
+        <li class="main "><a href="#introduction">Introduction</a></li>
+        
+    
+        <li class="main "><a href="#workflow">Workflow</a></li>
+        
+    
+        <li class="main "><a href="#creating-a-script">Creating a Script</a></li>
+        
+            <li><a href="#review">Review</a></li>
+        
+    
+        <li class="main "><a href="#script-options">Script Options</a></li>
+        
+    
+        <li class="main "><a href="#generic-tests">Generic Tests</a></li>
+        
+    
+        <li class="main "><a href="#assert-during-execution">Assert During Execution</a></li>
+        
+    
+    </ul>
+</div></div>
+                <div class="col-md-9" role="main">
+
+<h1 id="bash-test-tools"><strong>Bash Test Tools</strong></h1>
+<p><strong>for testing executables in a shell environment - here's a quick look...</strong></p>
+<pre><code class="bash"># A simple test for the &quot;find&quot; executable
+source bash_test_tools
+
+WORK=&quot;/tmp/work&quot;
+
+function setup
+{
+  mkdir -p &quot;$WORK&quot;
+  cd &quot;$WORK&quot;
+  touch some_file.txt
+}
+
+function teardown
+{
+  cd
+  rm -rf &quot;$WORK&quot;
+}
+
+function test_find_local_directory
+{
+  # Run
+  run &quot;find ./&quot;
+  # Assert
+  assert_success
+  assert_output_contains &quot;some_file.txt&quot;
+}
+
+testrunner
+</code></pre>
+
+<p><img alt="one test" src="./screenshot1.jpg" /></p>
+<h1 id="introduction">Introduction</h1>
+<p>Bash Test Tools is intended to be a simple to use framework for testing executables inside
+a shell environment. The framework allows extraction and assert operations on parameters
+such as <strong>standard output</strong>, <strong>standard error</strong>, <strong>exit code</strong>, <strong>execution time</strong>, <strong>file system</strong> and <strong>network services</strong>.</p>
+<p>The Bash Test Tools are suitable for performing high level tests on executables, i.e. <strong>system tests</strong>, treating an executable as
+a black box, examining only the output and state of the executable and its environment. Typical domains of use could be to:</p>
+<ul>
+<li>verify complete <strong>use cases</strong></li>
+<li>identify simple but critical failures, aka <strong>smoke testing</strong></li>
+<li>verify that documented behavior and <strong>--help</strong> is correct</li>
+<li>collect <strong>performance metrics</strong>  such as <strong>execution time</strong></li>
+</ul>
+<p>In this document we will collectively call these test scenarios <strong>system tests</strong>.</p>
+<h1 id="workflow">Workflow</h1>
+<p>The workflow for implementing tests is as follows,</p>
+<ol>
+<li>create a bash script</li>
+<li>source the <code>bash_test_tools</code> file</li>
+<li>define a function called <code>setup</code></li>
+<li>define a function called <code>teardown</code></li>
+<li>implement a series of test function, all must be named beginning with <code>test_</code> (e.g. <code>test_foo</code>).<ul>
+<li><strong>must</strong> contain a run call, e.g. <code>run "foo --some-opts args"</code></li>
+<li>followed by at least one assert call, e.g. <code>assert_success</code></li>
+</ul>
+</li>
+<li>execute the <code>testrunner</code> function (it will magically run all test that have been defined)</li>
+</ol>
+<p>When the script is executed each test will be preceeded by a <code>setup</code> followed by a <code>teardown</code> call.
+This is sometimes inefficient but ensures that all tests run in isolation from each other.
+If any one assert statement within a test function fails, the whole test will fail.</p>
+<h1 id="creating-a-script">Creating a Script</h1>
+<p>For demonstration purposes we are going to create a test for the UNIX command line tool
+<strong>find</strong>, a tool that helps you list and search for files and directories.
+First we must fetch the source code and source the <code>bash_test_tools</code> file that is located in the root of the
+source code directory</p>
+<pre><code class="bash">$ # get the source code
+$ git clone https://github.com/videntifier/bash_test_tools.github
+$ cd bash_test_tools
+$ # start editing a new test in you favorite editor (here we use nano)
+$ nano test_find.sh
+</code></pre>
+
+<p>At the top of your test script add your typical <strong>shebang</strong> and
+source the <code>bash_test_tools</code> file.</p>
+<pre><code class="bash">#! /usr/bin/env bash
+# -*- coding: utf-8 -*-
+source bash_test_tools
+</code></pre>
+
+<p>Before implementing our tests we must first define the <code>setup</code> and <code>teardown</code>
+functions that take care of setting up and removing an environment for
+the tests.</p>
+<p>Typically a <code>setup</code> function will create a working directory and <code>cd</code>
+into it.  The <code>setup</code> may also start necessary services and/or provide test files to
+operate on. Here is an example setup function that creates a work directory and
+adds an empty test file:</p>
+<pre><code class="bash">function setup
+{
+  mkdir -p work
+  cd work
+  touch some_file.txt
+}
+</code></pre>
+
+<p>The teardown function simply cleans up after the test has been performed and
+typically may look as follows:</p>
+<pre><code class="bash">function teardown
+{
+  cd ..
+  rm -rf work
+}
+</code></pre>
+
+<p>We can now define our first test. In this example lets find files in
+the local directory, then assert that the operation was successfull and
+exited gracefully. Off course we also assert that <strong>find</strong> has discovered
+our test file as expected,</p>
+<pre><code class="bash">function test_find_local_directory
+{
+  # Run
+  run &quot;find ./&quot;
+  # Assert
+  assert_success
+  assert_output_contains &quot;some_file.txt&quot;
+}
+</code></pre>
+
+<p>Finally it is necessary to execute the <code>testrunner</code>, without it no tests will be processed.
+Add the following line at the bottom of the script,</p>
+<pre><code class="bash">testrunner
+</code></pre>
+
+<p>The entire script now looks as follows,</p>
+<pre><code class="bash">#! /usr/bin/env bash
+# -*- coding: utf-8 -*-
+source bash_test_tools
+
+function setup
+{
+  mkdir -p work
+  cd work
+  touch some_file.txt
+}
+
+function teardown
+{
+  cd ..
+  rm -rf work
+}
+
+function test_find_local_directory
+{
+  # Run
+  run &quot;find ./&quot;
+  # Assert
+  assert_success
+  assert_output_contains &quot;some_file.txt&quot;
+}
+
+testrunner
+</code></pre>
+
+<p>Execute the script</p>
+<pre><code class="bash">chmod u+x test_find.sh
+./test_find.sh
+</code></pre>
+
+<p>and the output should look as follows,</p>
+<p><img alt="one test" src="./screenshot1.jpg" /></p>
+<h2 id="review">Review</h2>
+<p>Lets look in a little more detail what our test did.
+The test defined did three things:</p>
+<ul>
+<li>First the <code>"find ./"</code> execution call was passed to the <code>bash_test_tools</code> <code>run</code> function. Note the quotes <code>"find ./"</code>, they are necessary.
+<code>Run</code> will collect various metrics into global shell variables called <code>output</code>, <code>error</code>, <code>exectime</code>, <code>returnval</code> and <code>strace</code> - these will be addressed in detail later.</li>
+<li>The second function call <code>assert_success</code> is a generic test for healthy program termination with success. In fact the single <code>assert_success</code> call consists of a series of more granular asserts, called <code>assert_terminated_normally</code>, <code>assert_exit_success</code> and <code>assert_no_error</code>.<ul>
+<li><code>terminated normally</code> checks if executable exited normally (i.e. <strong>without crashing</strong> signals such as SIGENV).</li>
+<li><code>exit success</code> checks the exit status is 0 (SUCCESS).</li>
+<li><code>no error</code> will verify that nothing has been printed to standard error.</li>
+</ul>
+</li>
+<li>The third function call <code>assert_output_contains</code> simply verifies that the <code>find</code> has correctly reported to <code>standard output</code> that the test file <code>some_file.txt</code> was found.</li>
+</ul>
+<h1 id="script-options">Script Options</h1>
+<p>The framework automatically embeds options to the test script.
+Help will be printed with optional argument <code>-h</code>.</p>
+<pre><code class="bash">$ ./test_help -h
+
+test_find.sh - tests built on bash_test_tools
+
+Usage:  test_find.sh [OPTIONS]...
+
+  -l                 list all awailable tests
+  -t [TESTNAME]      run only test ending in TESTNAME
+  -o [TAP FILE]      write test results to TAP (test anything) file
+  -h                 print this help
+</code></pre>
+
+<p>For example, examine the test script provided inside the <strong>examples</strong> directory.</p>
+<pre><code class="bash">$ cd examples
+$ ./test_find.sh -l
+test_find_delete
+test_find_local_directory
+test_find_txt_files
+test_has_unix_conventions
+test_invalid_file_or_directory
+test_invalid_option
+test_new_feature
+</code></pre>
+
+<p>We can specifically run only tests ending with the name "_directory"</p>
+<pre><code class="bash">$ ./test_find.sh -t _directory
+----------------------------------------------------------------
+TEST FIND LOCAL DIRECTORY
+Running: find ./
+ExecTime: 0.004 seconds
+Assert: process terminated normally                          OK
+Assert: 'exit status' equal to 0                             OK
+Assert: 'stderror' is empty                                  OK
+Assert: 'stdoutput' contains 'some_file.txt'                 OK
+
+Status - PASS
+----------------------------------------------------------------
+TEST INVALID FILE OR DIRECTORY
+Running: find ./non_existing_path
+ExecTime: 0.004 seconds
+Assert: process terminated normally                          OK
+Assert: 'exit status' not equal to 0                         OK
+Assert: 'stderror' not empty                                 OK
+Assert: 'stderror' contains 'No such file or directory'      OK
+
+Status - PASS
+================================================================
+Ran 2 tests - Failed 0
+</code></pre>
+
+<p>And output test results in a portable format using the <a href="https://testanything.org/">Test Anything Protocol</a>,</p>
+<pre><code class="bash">$ ./test_find.sh -t _directory -o result.tap
+$ cat result.tap
+**TODO**
+</code></pre>
+
+<h1 id="generic-tests">Generic Tests</h1>
+<p><code>bash_test_tools</code> ships with a few <strong>generic</strong> tests that are appropriate for
+testing common features.  Two very common features within UNIX environments
+are that executables typically accept <code>--version</code> and <code>--help</code> arguments.
+To test an executable with a generic test for <code>--version</code> and <code>--help</code> options add
+there following to your script,</p>
+<pre><code class="bash">generic has_unix_version &quot;find&quot;
+generic has_unix_help &quot;find&quot;
+</code></pre>
+
+<p>This will automatically construct a generic tests on the executable <strong>find</strong>
+that checks if the executable terminates healthily and if it actually prints
+something to sandard out.</p>
+<pre><code>------------------------------------------------------
+TEST HAS UNIX HELP
+Running: find --help
+ExecTime: 0.004 seconds
+Assert: process terminated normally                OK
+Assert: 'exit status' equal to 0                   OK
+Assert: 'stderror' is empty                        OK
+Assert: 'stdout' not empty                         OK
+Assert: 'help' contains '--help'                   OK
+
+Status - PASS
+------------------------------------------------------
+TEST HAS UNIX VERSION
+Running: find --version
+ExecTime: 0.005 seconds
+Assert: process terminated normally                OK
+Assert: 'exit status' equal to 0                   OK
+Assert: 'stderror' is empty                        OK
+Assert: 'stdout' not empty                         OK
+Running: find --help
+ExecTime: 0.004 seconds
+Assert: 'help' contains '--version'                OK
+
+Status - PASS
+------------------------------------------------------
+</code></pre>
+
+<p>Notice that <code>has_unix_version</code> also checks if it has been
+documented in <code>--help</code>.
+There is a third generic test that calls these two test,
+it is called <code>has_unix_convention</code>, hence you can replace
+the above two with a single line,</p>
+<pre><code class="bash">generic has_unix_convention &quot;find&quot;
+</code></pre>
+
+<p>Not all command line tools do accept these options, we can take
+a look at how this test fails when no such option is available.
+<strong>strace</strong> is a tool that doesn't, here is how it fails,</p>
+<pre><code class="bash">----------------------------------------------------------
+TEST HAS UNIX VERSION
+Running: strace --version
+ExecTime: 0.003 seconds
+Assert: process terminated normally                    OK
+Assert: 'exit status' equal to 0                     FAIL
+Assert: 'stderror' is empty                          FAIL
+Assert: 'stdout' not empty                           FAIL
+Running: strace --help
+ExecTime: 0.002 seconds
+Assert: 'help' contains '--version'                  FAIL
+
+Status - FAIL
+==========================================================
+Ran 1 tests - Failed 1
+</code></pre>
+
+<p>Turns out <strong>strace</strong> terminates gracefully, but does indicate
+through <strong>exit status</strong> and <strong>standard error</strong> that the
+call is unsupported. Writing tests that fail in this way
+is in fact one of the main points of software testing, to track through
+<em>test driven development</em> if planned software features have been implemented
+or not.</p>
+<p>As the <code>bash_test_tools</code> codebase developes we expect to add more generic
+tests that help catch commonplace conventions.
+Tests for POSIX, Single UNIX and GNU protocols should be
+quite re-usable and ideal for writing generic tests. Please contribute some!
+Look for <strong>"function generic_"</strong> inside the <code>bash_test_tools</code> file to see how
+a generic test is developed.</p>
+<h1 id="assert-during-execution">Assert During Execution</h1>
+<p>So far we have only dealt with asserting conditions after an executable
+has terminated.  However, sometimes we need to test for conditions
+during execution. Some executables are for example designed to run as <strong>services</strong> or <strong>daemons</strong>.
+In such situations we may need to execute assert statements while an executable is running
+in the background. <code>bash_test_tools</code> allow you to do this adding a
+set of assert statements to a background_assert queue. The following statement
+adds a tcp service check on port 1234 to the queue,</p>
+<pre><code class="bash">add_background_assert assert_service_on_port 1234
+</code></pre>
+
+<p>These asserts will then be executed during a backgrounded run statement.
+Here we start <strong>netcat</strong>, a network diagnostic tool, and listen on port 1234
+for 2 seconds before ending the process with a signalled SIGTERM.</p>
+<pre><code class="bash">run &quot;nc -l 1234&quot; background 2 SIGTERM
+</code></pre>
+
+<p>The queued assert statements are executed after the 2 second sleep, followed by
+the signalled termination of the process. Some amount of sleep before executing
+asserts is necessary to allow the process or service to boot up or initialize.
+Off course the necessary sleep length will depend on the software and conditions that are being tested.
+The whole test function that we have described looks like this,</p>
+<pre><code class="bash">function test_nc_listen_on_port
+{
+  add_background_assert assert_service_on_port 1234
+  #run
+  run &quot;nc -l 1234&quot; background 2 SIGTERM
+  #assert
+  assert_terminated_normally
+  assert_no_error
+}
+</code></pre>
+
+<p>We have added a couple of more 'after execution' asserts to check for healthy termination of the software.
+When we execute the test we get the following output,</p>
+<pre><code class="bash">------------------------------------------------------------------
+TEST NC LISTEN ON PORT
+Running: nc -l 1234 (background 2 secs)
+Assert: service on port 1234                                   OK
+ExecTime: 2.016 seconds
+Assert: process terminated normally                            OK
+Assert: 'stderror' is empty                                    OK
+
+Status - PASS
+==================================================================
+Ran 1 tests - Failed 0
+
+</code></pre></div>
+            
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            
+            <p>Documentation built with <a href="http://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+
+        <script src="./js/jquery-1.10.2.min.js"></script>
+        <script src="./js/bootstrap-3.0.3.min.js"></script>
+        <script src="./js/highlight.pack.js"></script>
+        <script>var base_url = '.';</script>
+        <script data-main="./mkdocs/js/search.js" src="./mkdocs/js/require.js"></script>
+        <script src="./js/base.js"></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                        <h4 class="modal-title" id="exampleModalLabel">Search</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>
+                            From here you can search these documents. Enter
+                            your search terms below.
+                        </p>
+                        <form role="form">
+                            <div class="form-group">
+                                <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query">
+                            </div>
+                        </form>
+                        <div id="mkdocs-search-results"></div>
+                    </div>
+                    <div class="modal-footer">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </body>
+</html>
+
+<!--
+MkDocs version : 0.14.0
+Build Date UTC : 2016-07-17 23:36:39.175351
+-->

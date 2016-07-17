@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        
+        <link rel="shortcut icon" href="../img/favicon.ico">
+
+	<title>Assert API - Bash Test Tools</title>
+
+        <link href="../css/bootstrap-custom.min.css" rel="stylesheet">
+        <link href="../css/font-awesome-4.0.3.css" rel="stylesheet">
+        <link href="../css/base.css" rel="stylesheet">
+        <link rel="stylesheet" href="../css/highlight.css">
+
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+        <![endif]-->
+
+        
+    </head>
+
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+
+        <!-- Collapsed navigation -->
+        <div class="navbar-header">
+            
+            <!-- Expander button -->
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            
+
+            <!-- Main title -->
+            <a class="navbar-brand" href="..">Bash Test Tools</a>
+        </div>
+
+        <!-- Expanded navigation -->
+        <div class="navbar-collapse collapse">
+            
+                <!-- Main navigation -->
+                <ul class="nav navbar-nav">
+                
+                
+                    <li >
+                        <a href="..">Introduction</a>
+                    </li>
+                
+                
+                
+                    <li class="active">
+                        <a href="./">Assert API</a>
+                    </li>
+                
+                
+                </ul>
+            
+
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                        <i class="fa fa-search"></i> Search
+                    </a>
+                </li>
+                
+                    <li >
+                        <a rel="next" href="..">
+                            <i class="fa fa-arrow-left"></i> Previous
+                        </a>
+                    </li>
+                    <li class="disabled">
+                        <a rel="prev" >
+                            Next <i class="fa fa-arrow-right"></i>
+                        </a>
+                    </li>
+                
+                
+            </ul>
+        </div>
+    </div>
+</div>
+
+        <div class="container">
+            
+                <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+    
+        <li class="main active"><a href="#assert-api">Assert API</a></li>
+        
+            <li><a href="#variables">variables</a></li>
+        
+            <li><a href="#output">output</a></li>
+        
+            <li><a href="#error">error</a></li>
+        
+            <li><a href="#termination">termination</a></li>
+        
+            <li><a href="#file-system">file system</a></li>
+        
+            <li><a href="#services">services</a></li>
+        
+    
+    </ul>
+</div></div>
+                <div class="col-md-9" role="main">
+
+<h1 id="assert-api">Assert API</h1>
+<p>Currently the following assert functions have been implemented, Some useful asserts are probably still missing, so please contribute or ask for help.
+If you want to develop, please take a look at functions beginning with <code>assert_</code>
+in the <code>bash_test_tools</code> file.</p>
+<h2 id="variables">variables</h2>
+<p>The most elementary assert calls operate on environment variables within the shell.
+Typically more specific assert statements, such as <code>assert_no_error</code> are composed of one or more of these
+more elementary asserts.</p>
+<h4 id="assert_contains">assert_contains</h4>
+<pre><code class="bash"># Asserts that $var contains sub-string $string
+# assert_contains &quot;$var&quot; &quot;$string&quot;    [var-alias [string-alias]]
+# example: 
+assert_contains &quot;$output&quot; &quot;Hello World&quot;
+# or
+assert_contains &quot;$output&quot; &quot;Hello World&quot; &quot;standard output&quot;
+</code></pre>
+
+<h4 id="assert_not_contains">assert_not_contains</h4>
+<pre><code class="bash"># Asserts that $var does not contain a sub-string $string
+# assert_not_contains &quot;$string&quot; [var-alias [string-alias]]
+# example:
+assert_not_contains &quot;$output&quot; &quot;Hello World&quot;
+# or
+assert_not_contains &quot;$output&quot; &quot;Hello World&quot; &quot;standard output&quot;
+</code></pre>
+
+<h4 id="assert_equal">assert_equal</h4>
+<pre><code class="bash"># Asserts that $var1 equals $var2 - works on both numeric and strings
+# assert_equal &quot;$var1&quot; &quot;$var2&quot;    [var1-alias [var2-alias]]
+# example: 
+assert_equal &quot;$output&quot; &quot;Hello World&quot;
+assert_equal &quot;$output1&quot; &quot;$output2&quot; &quot;run 1 output&quot; &quot;run 2 output&quot;
+</code></pre>
+
+<h4 id="assert_not_equal">assert_not_equal</h4>
+<pre><code class="bash"># Asserts that $var1 does not equal $var2 - works on both numeric and strings
+# assert_not_equal &quot;$var1&quot; &quot;$var2&quot;    [var1-alias [var2-alias]]
+# example: 
+assert_not_equal &quot;$output&quot; &quot;Hello World&quot;
+# or
+assert_equal &quot;$output1&quot; &quot;$output2&quot; &quot;run 1 output&quot; &quot;run 2 output&quot;
+</code></pre>
+
+<h4 id="assert_greater_than">assert_greater_than</h4>
+<pre><code class="bash"># Asserts that $var1 is greater than $var2 - works on numeric
+# assert_greater_than &quot;$var1&quot; &quot;$var2&quot;    [var1-alias [var2-alias]]
+# example: 
+assert_greater_than &quot;$thread_count&quot; &quot;4&quot; &quot;thread count&quot;
+</code></pre>
+
+<h4 id="assert_less_than">assert_less_than</h4>
+<pre><code class="bash"># Asserts that $var1 is less than $var2 - works on numeric
+# assert_less_than &quot;$var1&quot; &quot;$var2&quot;    [var1-alias [var2-alias]]
+# example: 
+assert_less_than &quot;$thread_count&quot; &quot;4&quot; &quot;thread count&quot;
+</code></pre>
+
+<h4 id="assert_empty">assert_empty</h4>
+<pre><code class="bash"># Asserts that $var is &quot;&quot; or not set
+# assert_empty &quot;$var&quot; [var-alias]
+# example: 
+assert_empty &quot;$error&quot; &quot;std error&quot;
+</code></pre>
+
+<h4 id="assert_not_empty">assert_not_empty</h4>
+<pre><code class="bash"># Asserts that $var is not &quot;&quot;
+# assert_not_empty &quot;$var&quot; [var-alias]
+# example: 
+assert_not_empty &quot;$output&quot; &quot;std output&quot;
+</code></pre>
+
+<h4 id="assert_matches_regex">assert_matches_regex</h4>
+<pre><code class="bash"># Asserts that $var matches regular expression $regex
+# assert_matches &quot;$var&quot; &quot;$regex&quot; [var-alias]
+# example: 
+assert_matches_regex &quot;$output&quot; &quot;^[0-9]+\.[0-9]+\.[0-9]+&quot; &quot;output version number&quot;
+# i.e. asserts that $output begins with ##.##.## version style numerics
+</code></pre>
+
+<h2 id="output">output</h2>
+<p>These asserts apply specifically to the <strong>standard output</strong>, variable <code>output</code>.</p>
+<h4 id="assert_output_contains">assert_output_contains</h4>
+<pre><code class="bash"># Asserts that $output contains a sub-string $string [string-alias]
+# assert_output_contains &quot;$string&quot;
+# example:
+assert_output_contains &quot;Hello World&quot;
+</code></pre>
+
+<h4 id="assert_output_not_contains">assert_output_not_contains</h4>
+<pre><code class="bash"># Asserts that $output does not contain a sub-string $string [string-alias]
+# assert_output_not_contains &quot;$string&quot;
+# example:
+assert_output_not_contains &quot;Hello world&quot;
+</code></pre>
+
+<h4 id="assert_has_output">assert_has_output</h4>
+<pre><code class="bash"># Asserts that $output is not empty != &quot;&quot;
+# assert_has_output
+# example:
+assert_has_output
+</code></pre>
+
+<h4 id="assert_no_output">assert_no_output</h4>
+<pre><code class="bash"># Asserts that $output is empty == &quot;&quot;
+# assert_no_output
+# example:
+assert_no_output
+</code></pre>
+
+<h2 id="error">error</h2>
+<p>These asserts apply specifically to the <strong>standard error</strong>, variable <code>error</code></p>
+<h4 id="assert_error_contains">assert_error_contains</h4>
+<pre><code class="bash"># Asserts that $error contains a sub-string $string [string-alias]
+# assert_error_contains &quot;$string&quot;
+# example:
+assert_error_contains &quot;could not open file&quot;
+</code></pre>
+
+<h4 id="assert_has_error">assert_has_error</h4>
+<pre><code class="bash"># Asserts that $error is not empty != &quot;&quot;
+# assert_has_error
+# example:
+assert_has_error
+</code></pre>
+
+<h4 id="assert_no_error">assert_no_error</h4>
+<pre><code class="bash"># Asserts that $error is empty == &quot;&quot;
+# assert_no_error
+# example:
+assert_no_error
+</code></pre>
+
+<h2 id="termination">termination</h2>
+<p>These asserts apply specifically to the variables <code>returnval</code>, <code>error</code> and <code>strace</code>.  They evaluate the conditions by which the executable terminated.</p>
+<h4 id="assert_exit_success">assert_exit_success</h4>
+<pre><code class="bash"># Asserts that $returnval is equal to 0 (SUCCESS)
+# assert_exit_success
+# example:
+assert_exit_succes
+</code></pre>
+
+<h4 id="assert_exit_fail">assert_exit_fail</h4>
+<pre><code class="bash"># Asserts that $returnval is not equal to 0 (FAIL)
+# assert_exit_fail
+# example:
+assert_exit_fail
+</code></pre>
+
+<h4 id="assert_terminated_normally">assert_terminated_normally</h4>
+<pre><code class="bash"># Essentailly asserts that the executable exited without crashing.
+# Asserts that $strace does no include substring &quot;tgkill&quot;
+# assert_terminated_normally
+# example:
+assert_terminated_normally
+</code></pre>
+
+<h4 id="assert_success">assert_success</h4>
+<pre><code class="bash"># Asserts healthy success behavior
+# Calls assert_terminated_normally, assert_exit_success, assert_no_error
+# example:
+assert_success
+</code></pre>
+
+<h4 id="assert_fail">assert_fail</h4>
+<pre><code class="bash"># Asserts healthy fail behavior
+# Calls assert_terminated_normally, assert_exit_fail, assert_has_error
+# example:
+assert_fail
+</code></pre>
+
+<h2 id="file-system">file system</h2>
+<p>These asserts apply to files and directories</p>
+<h4 id="assert_file_exists">assert_file_exists</h4>
+<pre><code class="bash"># asserts that file exists
+# assert_file_exists &quot;$file_path&quot;
+# example:
+assert_file_exists &quot;$file_path&quot;
+</code></pre>
+
+<h4 id="assert_file_not_exists">assert_file_not_exists</h4>
+<pre><code class="bash"># asserts that file does not exist
+# assert_file_not_exists &quot;$file_path&quot;
+# example:
+assert_file_not_exists &quot;$file_path&quot;
+</code></pre>
+
+<h4 id="assert_dir_exists">assert_dir_exists</h4>
+<pre><code class="bash"># asserts that a directory exists
+# assert_dir_exists &quot;$dir_path&quot;
+# example:
+assert_dir_exists &quot;$dir_path&quot;
+</code></pre>
+
+<h4 id="assert_tree_equal">assert_tree_equal</h4>
+<pre><code class="bash"># asserts that two directory trees are the same
+# assert_tree_equal &quot;$dir1&quot; &quot;$dir2&quot;
+# example:
+assert_tree_equal &quot;/some/dir1&quot; &quot;/some/other/dir2&quot;
+</code></pre>
+
+<h4 id="assert_tree_not_equal">assert_tree_not_equal</h4>
+<pre><code class="bash"># asserts that two directory trees are not the same
+# assert_tree_not_equal &quot;$dir1&quot; &quot;$dir2&quot;
+# example:
+assert_tree_not_equal &quot;/some/dir1&quot; &quot;/some/other/dir2&quot;
+</code></pre>
+
+<h2 id="services">services</h2>
+<p>These asserts apply to services, typically network services.</p>
+<h4 id="assert_service_on_port">assert_service_on_port</h4>
+<pre><code class="bash"># asserts that a network service is listening on port $port
+# assert_service_on_port &quot;$port&quot;
+# example:
+assert_service_on_port &quot;8000&quot;
+</code></pre></div>
+            
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            
+            <p>Documentation built with <a href="http://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+
+        <script src="../js/jquery-1.10.2.min.js"></script>
+        <script src="../js/bootstrap-3.0.3.min.js"></script>
+        <script src="../js/highlight.pack.js"></script>
+        <script>var base_url = '..';</script>
+        <script data-main="../mkdocs/js/search.js" src="../mkdocs/js/require.js"></script>
+        <script src="../js/base.js"></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                        <h4 class="modal-title" id="exampleModalLabel">Search</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>
+                            From here you can search these documents. Enter
+                            your search terms below.
+                        </p>
+                        <form role="form">
+                            <div class="form-group">
+                                <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query">
+                            </div>
+                        </form>
+                        <div id="mkdocs-search-results"></div>
+                    </div>
+                    <div class="modal-footer">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </body>
+</html>
