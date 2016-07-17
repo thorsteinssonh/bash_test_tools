@@ -186,7 +186,7 @@ The test defined did three things:
 
 * First the `"find ./"` execution call was passed to the `bash_test_tools` `run` function. Note the quotes `"find ./"`, they are necessary.
 `Run` will collect various metrics into global shell variables called `output`, `error`, `exectime`, `returnval` and `strace` - these will be addressed in detail later.
-* The second function call `assert_success` is a generic test for healthy program termination with success. In fact the single `assert_success` call consists of a series of more granular asserts, called `assert_terminated_normally`, `assert_exit_success` and `assert_no_error`.
+* The second function call `assert_success` is a generic assert for healthy program termination with success. In fact the single `assert_success` call consists of a series of more granular asserts, called `assert_terminated_normally`, `assert_exit_success` and `assert_no_error`.
     * `terminated normally` checks if executable exited normally (i.e. **without crashing** signals such as SIGENV).
     * `exit success` checks the exit status is 0 (SUCCESS).
     * `no error` will verify that nothing has been printed to standard error.
@@ -262,13 +262,14 @@ $ cat result.tap
 testing common features.  Two very common features within UNIX environments
 are that executables typically accept `--version` and `--help` arguments.
 To test an executable with a generic test for `--version` and `--help` options add
-there following to your script,
+the following two lines to your script,
 ```bash
 generic has_unix_version "find"
 generic has_unix_help "find"
 ```
-This will automatically construct a generic tests on the executable **find**
-that checks if the executable terminates healthily and if it actually prints
+This will automatically construct tests on the executable **find**
+that check if the executable accepts version and help options.
+They will assert that the program terminates healthily and if it actually prints
 something to sandard out.
 ```
 ------------------------------------------------------
