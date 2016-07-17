@@ -291,7 +291,7 @@ The test defined did three things:</p>
 <ul>
 <li>First the <code>"find ./"</code> execution call was passed to the <code>bash_test_tools</code> <code>run</code> function. Note the quotes <code>"find ./"</code>, they are necessary.
 <code>Run</code> will collect various metrics into global shell variables called <code>output</code>, <code>error</code>, <code>exectime</code>, <code>returnval</code> and <code>strace</code> - these will be addressed in detail later.</li>
-<li>The second function call <code>assert_success</code> is a generic test for healthy program termination with success. In fact the single <code>assert_success</code> call consists of a series of more granular asserts, called <code>assert_terminated_normally</code>, <code>assert_exit_success</code> and <code>assert_no_error</code>.<ul>
+<li>The second function call <code>assert_success</code> is a generic assert for healthy program termination with success. In fact the single <code>assert_success</code> call consists of a series of more granular asserts, called <code>assert_terminated_normally</code>, <code>assert_exit_success</code> and <code>assert_no_error</code>.<ul>
 <li><code>terminated normally</code> checks if executable exited normally (i.e. <strong>without crashing</strong> signals such as SIGENV).</li>
 <li><code>exit success</code> checks the exit status is 0 (SUCCESS).</li>
 <li><code>no error</code> will verify that nothing has been printed to standard error.</li>
@@ -363,13 +363,14 @@ $ cat result.tap
 testing common features.  Two very common features within UNIX environments
 are that executables typically accept <code>--version</code> and <code>--help</code> arguments.
 To test an executable with a generic test for <code>--version</code> and <code>--help</code> options add
-there following to your script,</p>
+the following two lines to your script,</p>
 <pre><code class="bash">generic has_unix_version &quot;find&quot;
 generic has_unix_help &quot;find&quot;
 </code></pre>
 
-<p>This will automatically construct a generic tests on the executable <strong>find</strong>
-that checks if the executable terminates healthily and if it actually prints
+<p>This will automatically construct tests on the executable <strong>find</strong>
+that check if the executable accepts version and help options.
+They will assert that the program terminates healthily and if it actually prints
 something to sandard out.</p>
 <pre><code>------------------------------------------------------
 TEST HAS UNIX HELP
@@ -532,5 +533,5 @@ Ran 1 tests - Failed 0
 
 <!--
 MkDocs version : 0.14.0
-Build Date UTC : 2016-07-17 23:36:39.175351
+Build Date UTC : 2016-07-17 23:44:06.352866
 -->
