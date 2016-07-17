@@ -198,7 +198,7 @@ The framework automatically embeds options to the test script.
 Help will be printed with optional argument `-h`.
 
 ```bash
-$ ./test_help -h
+$ ./test_find.sh -h
 
 test_find.sh - tests built on bash_test_tools
 
