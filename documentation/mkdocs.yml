@@ -1,0 +1,7 @@
+site_name: Bash Test Tools
+#theme: readthedocs
+
+pages:
+- Introduction: 'index.md'
+- 'Assert_API.md'
+
