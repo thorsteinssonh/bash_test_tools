@@ -12,9 +12,10 @@
 	<title>Bash Test Tools</title>
 
         <link href="./css/bootstrap-custom.min.css" rel="stylesheet">
-        <link href="./css/font-awesome-4.0.3.css" rel="stylesheet">
+        <link href="./css/font-awesome-4.5.0.css" rel="stylesheet">
         <link href="./css/base.css" rel="stylesheet">
         <link rel="stylesheet" href="./css/highlight.css">
+        <link href="./custom.css" rel="stylesheet">
 
         <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
         <!--[if lt IE 9]>
@@ -352,10 +353,17 @@ Status - PASS
 Ran 2 tests - Failed 0
 </code></pre>
 
-<p>And output test results in a portable format using the <a href="https://testanything.org/">Test Anything Protocol</a>,</p>
-<pre><code class="bash">$ ./test_find.sh -t _directory -o result.tap
+<p>and we can output test results in a portable format using the <a href="https://testanything.org/">Test Anything Protocol</a>,</p>
+<pre><code class="bash">$ ./test_find.sh -o result.tap
 $ cat result.tap
-**TODO**
+1..7
+ok 1 - test_find_delete
+ok 2 - test_find_local_directory
+ok 3 - test_find_txt_files
+ok 4 - test_has_unix_conventions
+ok 5 - test_invalid_file_or_directory
+ok 6 - test_invalid_option
+not ok 7 - test_new_feature
 </code></pre>
 
 <h1 id="generic-tests">Generic Tests</h1>
@@ -532,6 +540,6 @@ Ran 1 tests - Failed 0
 </html>
 
 <!--
-MkDocs version : 0.14.0
-Build Date UTC : 2016-07-17 23:49:18.507324
+MkDocs version : 0.15.3
+Build Date UTC : 2016-07-18 18:23:44.008182
 -->
