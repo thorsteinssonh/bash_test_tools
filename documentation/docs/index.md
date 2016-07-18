@@ -1,5 +1,6 @@
 #**Bash Test Tools**
 **for testing executables in a shell environment - here's a quick look...**
+
 ```bash
 # A simple test for the "find" executable
 source bash_test_tools
@@ -30,6 +31,7 @@ function test_find_local_directory
 
 testrunner
 ```
+
 ![one test](screenshot1.jpg)
 
 # Introduction
@@ -250,11 +252,18 @@ Status - PASS
 ================================================================
 Ran 2 tests - Failed 0
 ```
-And output test results in a portable format using the [Test Anything Protocol](https://testanything.org/),
+and we can output test results in a portable format using the [Test Anything Protocol](https://testanything.org/),
 ```bash
-$ ./test_find.sh -t _directory -o result.tap
+$ ./test_find.sh -o result.tap
 $ cat result.tap
-**TODO**
+1..7
+ok 1 - test_find_delete
+ok 2 - test_find_local_directory
+ok 3 - test_find_txt_files
+ok 4 - test_has_unix_conventions
+ok 5 - test_invalid_file_or_directory
+ok 6 - test_invalid_option
+not ok 7 - test_new_feature
 ```
 
 #Generic Tests

@@ -40,8 +40,8 @@ function bash_test_tools_help
    printf "$THIS_SCRIPT_NAME - tests built on bash_test_tools\n\n"
    printf "Usage:  $THIS_SCRIPT_NAME [OPTIONS]...\n\n"
    printf "  -l                 list all available tests\n"
-   printf "  -t [TESTNAME]      run only test ending in TESTNAME\n"
-   printf "  -o [TAP FILE]      write test results to TAP (test anything) file\n"
+   printf "  -t TESTNAME      run only test ending in TESTNAME\n"
+   printf "  -o TAP_FILE      write test results to TAP (test anything) file\n"
    printf "  -h                 print this help\n\n"
 }
 
@@ -67,6 +67,17 @@ while getopts t:o:hl opt; do
     exit 1
   esac
 done
+
+# default empty setup/teardown functions
+function setup
+{
+ :
+}
+
+function teardown
+{
+ :
+}
 
 function get_current_line
 {
@@ -183,7 +194,11 @@ function assert_has_output
 
 function assert_contains
 {
-  [[ $3 ]] && printf "${ASSERT_STR} '$3' contains '$2' " ||  printf "${ASSERT_STR} contains '$2' "
+  if [[ $4 ]]; then
+    printf "${ASSERT_STR} '$3' contains '$4' "
+  else
+    [[ $3 ]] && printf "${ASSERT_STR} '$3' contains '$2' " ||  printf "${ASSERT_STR} contains '$2' "
+  fi
   if [[ "$1" == *"$2"* ]]; then
     print_ok
     return 0
@@ -211,7 +226,11 @@ function assert_error_contains
 
 function assert_not_contains
 {
-  [[ $3 ]] && printf "${ASSERT_STR} '$3' does not contain '$2' " ||  printf "${ASSERT_STR} does not contain '$2' "
+  if [[ $4 ]]; then
+    printf "${ASSERT_STR} '$3' does not contains '$4' "
+  else
+    [[ $3 ]] && printf "${ASSERT_STR} '$3' does not contain '$2' " ||  printf "${ASSERT_STR} does not contain '$2' "
+  fi
   if [[ "$1" != *"$2"* ]]; then
     print_ok
     return 0
@@ -477,6 +496,18 @@ function get_n_threads
   unset count_threads_pid
 }
 
+# Check if argument is a bash function
+function is_function
+{
+  local tp=$( type $1 | head -1 )
+  if [[ "$tp" == *"is a function" ]]; then
+    return 0;
+  else
+    return 1;
+  fi
+}
+
+
 # Run function collecting stdout stderr and ret value
 function run
 {
@@ -520,13 +551,32 @@ function run
 
 }
 
+# Count no of tests
+function count_tests
+{
+  local count_tests=0
+  for foo in $(declare -F); do
+    if [[ "$foo" == "test_"*"${TEST_FUNCTION}" ]]; then
+      ((count_tests++))
+    fi
+  done
+  echo $count_tests
+}
+
 # Test runner function
 function testrunner
 {
    # search through all declared functions and
    # and run those with names beginning with test_
-   count_fail=0
-   count_tests=0
+   local count_fail=0
+   local count_tests=0
+
+   # write TAP file test count header
+   if [ $TAP_FILE ]; then
+     local ntests=$(count_tests)
+     rm -rf $TAP_FILE
+     echo 1..$ntests >> $TAP_FILE
+   fi
 
    for foo in $(declare -F); do
      if [[ "$foo" == "test_"*"${TEST_FUNCTION}" ]]; then
@@ -543,6 +593,12 @@ function testrunner
        [ "$_assert_condition" == "0" ] || ((count_fail++))
        ((count_tests++))
        teardown
+       # write test result to TAP file
+       if [ "$TAP_FILE" ]; then
+         [ "$_assert_condition" != "0" ] && echo -n "not " >> $TAP_FILE
+         echo -n "ok $count_tests - $foo" >> $TAP_FILE
+         echo "" >> $TAP_FILE
+       fi
      fi;
    done
    [[ "$LIST_TESTS_ONLY" ]] && exit 0
