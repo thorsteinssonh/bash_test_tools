@@ -119,6 +119,29 @@ function count_files
 # Assert functions
 _assert_condition=0  # this var tracks assert status during testing
 
+function assert
+{
+  # run an external custom executable or function as assert,
+  # exit code 0 for success, !=0 for fail.
+  printf "${ASSERT_STR} $1"
+  if ./$1 1>_assert_output 2>_assert_output; then
+    local assert_output=$(<_assert_output)
+    rm -rf _assert_output
+    print_ok
+    if [ "$assert_output" != "" ]; then
+      printf "+++++++++\n"
+      printf "$assert_output\n"
+      printf "+++++++++\n"
+    fi
+    return 0
+  else
+    print_fail
+    ((_assert_condition++))
+    rm -rf _assert_output
+    return 1
+  fi
+}
+
 function assert_matches_regex
 {
   [[ $3 ]] && printf "${ASSERT_STR} '$3' matches '$2' " || printf "${ASSERT_STR} matches '$2' "

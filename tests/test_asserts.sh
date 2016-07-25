@@ -17,7 +17,7 @@ output=""; assert_no_output
 assert_contains "some text here" "text h" "string" "substring"
 assert_contains "some text\nhere" "text\nh" "string" "stubstring w newline"
 assert_not_contains "some text here" "text-h" "string" "substring"
-
+assert "arg_is_foobar.py foobar"
 
 total_fail1=$_assert_condition
 
@@ -33,6 +33,7 @@ output="abc"; assert_no_output
 assert_contains "some text here" "texth" "string" "substring"
 assert_contains "some text here" "text\nh" "string" "stubstring w newline"
 assert_not_contains "some text here" "text h" "string" "substring"
+assert "arg_is_foobar.py notfoobar"
 
 total_fail2=$_assert_condition
 
@@ -45,7 +46,7 @@ function test_ok_asserts
 function test_fail_asserts
 {
   # Assert
-  assert_equal "$total_fail2" "10" "fail asserts"
+  assert_equal "$total_fail2" "11" "fail asserts"
 }
 
 # Run all test functions - optional argument passed to run specific tests only
