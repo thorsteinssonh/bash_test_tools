@@ -353,8 +353,7 @@ a generic test is developed.
 The shell environment is not ideal for performing complicated tests
 on text and binary files. The `assert` function allows you to call any
 executable, be it compiled, python, or ruby, for the purpose of performing more
-granular assert, that would otherwise be very difficult to perform within the shell only.
-The requirement on the external assert executable is that it return an
+granular asserts. The requirement on the external assert executable is that it return an
 exit code of 0 if the assert is successful, and !=0 if the assert fails.
 For demonstration purposes we will define an assert executable in python, `is_foobar.py`.
 It returns success if the argument is `"foobar"`, otherwise it returns fail.
