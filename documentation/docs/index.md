@@ -349,6 +349,43 @@ quite re-usable and ideal for writing generic tests. Please contribute some!
 Look for **"function generic_"** inside the `bash_test_tools` file to see how
 a generic test is developed.
 
+# External Asserts
+The shell environment is not ideal for performing complicated tests
+on text and binary files. The `assert` function allows you to call any
+executable, be it compiled, python, or ruby, for the purpose of performing more
+granular tests and assert than would otherwise be very difficult to perform within the shell only.
+The requirement on the external assert executable is that it return an
+exit code of 0 if the assert is successful, and !=0 if the assert fails.
+For demonstration purposes we will define an assert executable in python, `is_foobar.py`.
+It returns success if the argument is `"foobar"`, otherwise it returns fail.
+```python
+import sys
+argument = sys.argv[1]
+if argument == "foobar":
+    sys.exit(0)
+else:
+    sys.exit(1)
+```
+In our hypothetical test we can now add an assert that calls this
+custom python test,
+```bash
+assert "is_foobar.py foobar"
+```
+The output test should now include this assert step,
+```bash
+Assert: arg_is_foobar.py foobar                             OK
+```
+Typically these custom assert functions will performe more useful
+and more detailed tasks than demonstrated here.
+It's useful to name the asserts informatively as above.
+For example,
+```bash
+assert "is_jpeg_image.py some_image.file"
+# or
+assert "is_json_text.py some_text_file"
+```
+This will help to make the test output more readable.
+
 # Assert During Execution
 So far we have only dealt with asserting conditions after an executable
 has terminated.  However, sometimes we need to test for conditions
