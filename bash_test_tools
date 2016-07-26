@@ -131,21 +131,36 @@ function assert
 {
   # run an external custom executable or function as assert,
   # exit code 0 for success, !=0 for fail.
-  printf "${ASSERT_STR} $1"
-  if ./$1 1>_assert_output 2>_assert_output; then
+
+  # strip down full path from command - for neater printing
+  local execname=$(basename "${1%% *}")
+  if [[ "$1" =~ ^[^[:space:]]+[[:space:]]+[^[:space:]]+ ]]; then
+  # checking if cmd has arguments
+    local stripped_cmd="${execname} ${1#* }"
+  else
+    local stripped_cmd="${execname}"
+  fi
+
+  printf "${ASSERT_STR} $stripped_cmd"
+  if $1 1>_assert_output 2>_assert_output; then
     local assert_output=$(<_assert_output)
     rm -rf _assert_output
     print_ok
     if [ "$assert_output" != "" ]; then
-      printf "+++++++++\n"
+      printf " ++ $execname says:\n"
       printf "$assert_output\n"
-      printf "+++++++++\n"
     fi
     return 0
   else
+    local assert_output=$(<_assert_output)
+    rm -rf _assert_output
     print_fail
     ((_assert_condition++))
     rm -rf _assert_output
+    if [ "$assert_output" != "" ]; then
+      printf " ++ $execname says:\n"
+      printf "$assert_output\n"
+    fi
     return 1
   fi
 }
