@@ -50,6 +50,15 @@ a black box, examining only the output and state of the executable and its envir
 
 In this document we will collectively call these test scenarios **system tests**.
 
+# Prerequisites
+
+The test runner uses `strace` to track signalled exits or terminations of executables.
+To install on debian systems do,
+
+```bash
+$ sudo apt-get install strace
+```
+
 # Workflow
 The workflow for implementing tests is as follows,
 
