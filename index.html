@@ -12,7 +12,7 @@
 	<title>Bash Test Tools</title>
 
         <link href="./css/bootstrap-custom.min.css" rel="stylesheet">
-        <link href="./css/font-awesome-4.0.3.css" rel="stylesheet">
+        <link href="./css/font-awesome-4.5.0.css" rel="stylesheet">
         <link href="./css/base.css" rel="stylesheet">
         <link rel="stylesheet" href="./css/highlight.css">
         <link href="./custom.css" rel="stylesheet">
@@ -103,6 +103,9 @@
         <li class="main "><a href="#introduction">Introduction</a></li>
         
     
+        <li class="main "><a href="#prerequisits">Prerequisits</a></li>
+        
+    
         <li class="main "><a href="#workflow">Workflow</a></li>
         
     
@@ -173,6 +176,12 @@ a black box, examining only the output and state of the executable and its envir
 <li>collect <strong>performance metrics</strong>  such as <strong>execution time</strong></li>
 </ul>
 <p>In this document we will collectively call these test scenarios <strong>system tests</strong>.</p>
+<h1 id="prerequisits">Prerequisits</h1>
+<p>The test runner uses <code>strace</code> to track signalled exits or terminations of executables.
+To install on debian systems do,</p>
+<pre><code class="bash">$ sudo apt-get install strace
+</code></pre>
+
 <h1 id="workflow">Workflow</h1>
 <p>The workflow for implementing tests is as follows,</p>
 <ol>
@@ -578,6 +587,6 @@ Ran 1 tests - Failed 0
 </html>
 
 <!--
-MkDocs version : 0.14.0
-Build Date UTC : 2016-07-25 01:07:17.188324
+MkDocs version : 0.15.3
+Build Date UTC : 2016-08-08 13:53:14.966464
 -->
