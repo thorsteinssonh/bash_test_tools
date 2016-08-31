@@ -17,7 +17,7 @@ output=""; assert_no_output
 assert_contains "some text here" "text h" "string" "substring"
 assert_contains "some text\nhere" "text\nh" "string" "stubstring w newline"
 assert_not_contains "some text here" "text-h" "string" "substring"
-assert "arg_is_foobar.py foobar"
+assert "./arg_is_foobar.py foobar"
 
 total_fail1=$_assert_condition
 
@@ -33,7 +33,7 @@ output="abc"; assert_no_output
 assert_contains "some text here" "texth" "string" "substring"
 assert_contains "some text here" "text\nh" "string" "stubstring w newline"
 assert_not_contains "some text here" "text h" "string" "substring"
-assert "arg_is_foobar.py notfoobar"
+assert "./arg_is_foobar.py notfoobar"
 
 total_fail2=$_assert_condition
 
