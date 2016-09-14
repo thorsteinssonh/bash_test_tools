@@ -12,7 +12,7 @@
 	<title>Bash Test Tools</title>
 
         <link href="./css/bootstrap-custom.min.css" rel="stylesheet">
-        <link href="./css/font-awesome-4.5.0.css" rel="stylesheet">
+        <link href="./css/font-awesome-4.0.3.css" rel="stylesheet">
         <link href="./css/base.css" rel="stylesheet">
         <link rel="stylesheet" href="./css/highlight.css">
         <link href="./custom.css" rel="stylesheet">
@@ -205,7 +205,7 @@ If any one assert statement within a test function fails, the whole test will fa
 First we must fetch the source code and source the <code>bash_test_tools</code> file that is located in the root of the
 source code directory</p>
 <pre><code class="bash">$ # get the source code
-$ git clone https://github.com/videntifier/bash_test_tools.github
+$ git clone https://github.com/thorsteinssonh/bash_test_tools.git
 $ cd bash_test_tools
 $ # start editing a new test in you favorite editor (here we use nano)
 $ nano test_find.sh
@@ -321,7 +321,7 @@ test_find.sh - tests built on bash_test_tools
 
 Usage:  test_find.sh [OPTIONS]...
 
-  -l                 list all awailable tests
+  -l                 list all available tests
   -t [TESTNAME]      run only test ending in TESTNAME
   -o [TAP FILE]      write test results to TAP (test anything) file
   -h                 print this help
@@ -587,6 +587,6 @@ Ran 1 tests - Failed 0
 </html>
 
 <!--
-MkDocs version : 0.15.3
-Build Date UTC : 2016-08-08 13:55:14.263447
+MkDocs version : 0.14.0
+Build Date UTC : 2016-09-14 22:02:17.785406
 -->
