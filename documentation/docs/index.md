@@ -83,7 +83,7 @@ source code directory
 
 ```bash
 $ # get the source code
-$ git clone https://github.com/videntifier/bash_test_tools.github
+$ git clone https://github.com/thorsteinssonh/bash_test_tools.git
 $ cd bash_test_tools
 $ # start editing a new test in you favorite editor (here we use nano)
 $ nano test_find.sh
@@ -215,7 +215,7 @@ test_find.sh - tests built on bash_test_tools
 
 Usage:  test_find.sh [OPTIONS]...
 
-  -l                 list all awailable tests
+  -l                 list all available tests
   -t [TESTNAME]      run only test ending in TESTNAME
   -o [TAP FILE]      write test results to TAP (test anything) file
   -h                 print this help
