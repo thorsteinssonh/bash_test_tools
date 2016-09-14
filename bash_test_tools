@@ -40,7 +40,7 @@ function bash_test_tools_help
    printf "$THIS_SCRIPT_NAME - tests built on bash_test_tools\n\n"
    printf "Usage:  $THIS_SCRIPT_NAME [OPTIONS]...\n\n"
    printf "  -l                 list all available tests\n"
-   printf "  -t TESTNAME        run only test ending in TESTNAME\n"
+   printf "  -t TESTNAME        run only tests ending in TESTNAME\n"
    printf "  -o TAP_FILE        write test results to TAP (test anything) file\n"
    printf "  -x                 disable teardown (for debugging)\n"
    printf "  -h                 print this help\n\n"

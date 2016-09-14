@@ -216,8 +216,9 @@ test_find.sh - tests built on bash_test_tools
 Usage:  test_find.sh [OPTIONS]...
 
   -l                 list all available tests
-  -t [TESTNAME]      run only test ending in TESTNAME
+  -t [TESTNAME]      run only tests ending in TESTNAME
   -o [TAP FILE]      write test results to TAP (test anything) file
+  -x                 disable teardown (for debugging)
   -h                 print this help
 ```
 
