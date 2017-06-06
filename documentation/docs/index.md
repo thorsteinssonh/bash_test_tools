@@ -59,6 +59,12 @@ To install on debian systems do,
 $ sudo apt-get install strace
 ```
 
+Also get a copy of the latest **bash_test_tools** source file: 
+
+```bash
+$ wget https://raw.githubusercontent.com/thorsteinssonh/bash_test_tools/master/bash_test_tools
+```
+
 # Workflow
 The workflow for implementing tests is as follows,
 

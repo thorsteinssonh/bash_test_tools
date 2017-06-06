@@ -656,4 +656,10 @@ function testrunner
    # print summary
    print_line "="
    echo "Ran ${count_tests} tests - Failed ${count_fail}"
+   # return with correct exit code
+   if ((${count_fail} == 0)); then
+     return 0
+   else
+     return 1
+   fi
 }
