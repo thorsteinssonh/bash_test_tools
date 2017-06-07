@@ -625,6 +625,7 @@ function testrunner
    # write TAP file test count header
    if [ $TAP_FILE ]; then
      local ntests=$(count_tests)
+     TAP_FILE=$(realpath $TAP_FILE)
      rm -rf $TAP_FILE
      echo 1..$ntests >> $TAP_FILE
    fi
