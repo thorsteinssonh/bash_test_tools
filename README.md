@@ -30,7 +30,7 @@ function test_find_local_directory
 testrunner
 ```
 Bash Test Tools is intended to be a simple to use framework for testing executables inside the
-a shell environment. The framework allows extraction and assert operations on parameters 
+shell environment. The framework allows extraction and assert operations on parameters 
 such as standard output, standard error, exit code, execution time, file system and network services.
 Please read the full documentation located here [bash_test_tools docs](https://thorsteinssonh.github.com/bash_test_tools).
 
