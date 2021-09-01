@@ -32,5 +32,5 @@ testrunner
 Bash Test Tools is intended to be a simple to use framework for testing executables inside the
 shell environment. The framework allows extraction and assert operations on parameters 
 such as standard output, standard error, exit code, execution time, file system and network services.
-Please read the full documentation located here [bash_test_tools docs](https://thorsteinssonh.github.com/bash_test_tools).
+Please read the full documentation located here [bash_test_tools docs](https://thorsteinssonh.github.io/bash_test_tools).
 
