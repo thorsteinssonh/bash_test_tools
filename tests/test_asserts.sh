@@ -40,13 +40,13 @@ total_fail2=$_assert_condition
 function test_ok_asserts
 {
   # Assert
-  assert_equal "$total_fail1" "0" "ok asserts"
+  assert_equal "$total_fail1" "0" "no. of ok asserts failed should be"
 }
 
 function test_fail_asserts
 {
   # Assert
-  assert_equal "$total_fail2" "11" "fail asserts"
+  assert_equal "$total_fail2" "11" "no. of fail asserts failed should be"
 }
 
 # Run all test functions - optional argument passed to run specific tests only
